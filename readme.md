@@ -3,6 +3,13 @@
 SlowerTCP is a small tcp framework, it simplifies a little the data handling on tcp servers. 
 It is the TCP equivalent of the Slower package.
 
+## Usage:
+
+```
+const SlowerTCP = require('slowertcp');
+const app = SlowerTCP();
+```
+
 ### API Methods:
 
 ```
@@ -85,10 +92,10 @@ app.routes
 > An Array containing Route instances, representing all the 
   declared routes.
 > Route objects have this structure:
-Route {
-    route: String
-    callback: Function
-}
+    Route {
+        route: String
+        callback: Function
+    }
 ```
 ```
 app.routes: Array[Route...]
@@ -103,6 +110,21 @@ app.timeout: Number
 app.port: Number
 app.host: String
 ```
+
+### API modifications on 'net.Socket' instances:
+ - The API modifies every ```net.Socket``` instance BEFORE it is passed 
+to ```app.connectionListener```. This means that all events receiving 
+a socket will receive the modified socket instead.
+ - The modifications adds the following properties to the socket instance:
+```
+ <socket>.session: Object           => A container for persistent data appended to sockets
+ <socket>.session.port: Number      => The local port number
+ <socket>.session.rport: Number     => The remote port number
+ <socket>.session.host: String      => The local host interface address
+ <socket>.session.rhost: String     => The remote host interface address
+```
+- It is possible to use the ```socket.session``` object to append data that will persist 
+during the lifetime of a single connection. Useful for keeping short-life local variables.
 
 ### Example usage:
 ```
